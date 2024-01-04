@@ -1,0 +1,65 @@
+﻿@using ECommerceWeb.Repository;
+@model IEnumerable<Category>
+@inject IRepository<SubCategory> _subCatRepo
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h4>Categories</h4>
+
+<hr />
+
+<a asp-action="CreateCategory">Add Category</a>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="accordion" id="accordionFlushExample">
+            @foreach (var item in Model)
+            {
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-@item.Name" aria-expanded="false" aria-controls="flush-@item.Name">
+                            <img src="~/CategoryImages/@item.Image" style="width:3rem;height:3rem;" class="rounded me-3"/>
+                            @item.Name
+                        </button>
+                    </h2>
+                    <div id="flush-@item.Name" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">
+                            <div class="d-flex justify-content-between my-2">
+                                <div class="btn-group">
+                                    <a asp-action="EditCategory" asp-route-id="@item.Id" class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i></a>
+                                    <a asp-action="DeleteCategory" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
+                                </div>
+                                <a asp-action="CreateSubCategory" asp-route-id="@item.Id" class="btn btn-sm btn-primary">+ New Sub Category</a>
+                            </div>
+                            <table class="table table-info table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        var subCats = _subCatRepo.GetMany(x => x.Category == item.Id.ToString());
+                                        foreach (var subItem in subCats)
+                                        {
+                                            <tr>
+                                                <td><img src="~/CategoryImages/@subItem.Image" style="width:3rem;height:3rem;" class="rounded" /></td>
+                                                <td>@subItem.Name</td>
+                                                <td class="">
+                                                    <a class="btn btn-sm btn-success" asp-action="EditSubCategory" asp-route-id="@subItem.Id"><i class="bi bi-pencil-square"></i></a>
+                                                    <a class="btn btn-sm btn-danger" asp-action="DeleteSubCategory" asp-route-id="@subItem.Id"><i class="bi bi-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
